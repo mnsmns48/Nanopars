@@ -81,11 +81,68 @@ software = Table('software', metadata,
                  Column("shell_ui", VARCHAR(15)),
                  Column("system_size", Float)
                  )
+battery = Table('battery', metadata,
+                Column('title', VARCHAR(40), primary_key=True),
+                Column('brand', VARCHAR(10)),
+                Column("charging_power", SmallInteger, nullable=True),
+                Column("wireless_charge", Boolean, nullable=True),
+                Column("reverse_charge", Boolean, nullable=True),
+                Column("fast_charge", VARCHAR(40), nullable=True),
+                Column("time_full_charge", VARCHAR(10), nullable=True)
+                )
 
+main_camera = Table('main_camera', metadata,
+                    Column('title', VARCHAR(40), primary_key=True),
+                    Column('brand', VARCHAR(10)),
+                    Column("matrix", SmallInteger, nullable=True),
+                    Column("_8k_video_rec", VARCHAR(20), nullable=True),
+                    Column("_4k_video_rec", VARCHAR(20), nullable=True),
+                    Column("_fullhd_video_rec", VARCHAR(20), nullable=True),
+                    Column("lenses", VARCHAR(40), nullable=True),
+                    Column("primary_lens", ARRAY(Text), nullable=True),
+                    Column("camera_total_score", SmallInteger)
+                    )
 
+selfie_camera = Table('selfie_camera', metadata,
+                      Column('title', VARCHAR(40), primary_key=True),
+                      Column('brand', VARCHAR(10)),
+                      Column("matrix", SmallInteger, nullable=True),
+                      Column("aperture", Float, nullable=True),
+                      Column("video_rec_resolution", VARCHAR(40), nullable=True)
+                      )
 
+communications = Table('communications', metadata,
+                       Column('title', VARCHAR(40), primary_key=True),
+                       Column('brand', VARCHAR(10)),
+                       Column("sim_count", SmallInteger, nullable=True),
+                       Column("eSIM_support", Boolean, nullable=True),
+                       Column("hybrid_sim_slot", Boolean, nullable=True),
+                       Column("wifi_version", VARCHAR(40), nullable=True),
+                       Column("bt_version", Float, nullable=True),
+                       Column("usb_type", VARCHAR(10), nullable=True),
+                       Column("gps", VARCHAR(40), nullable=True),
+                       Column("nfc", Boolean, nullable=True),
+                       Column("_5g_support", Boolean, nullable=True),
+                       Column("communications_total_score", SmallInteger)
+                       )
 
+sound = Table('sound', metadata,
+              Column('title', VARCHAR(40), primary_key=True),
+              Column('brand', VARCHAR(10)),
+              Column("speakers", VARCHAR(10), nullable=True),
+              Column("_3_5mm_port", Boolean, nullable=True)
+              )
 
+other = Table('other', metadata,
+              Column('title', VARCHAR(40), primary_key=True),
+              Column('brand', VARCHAR(10)),
+              Column("_class", VARCHAR(20), nullable=True),
+              Column("release_date", VARCHAR(30), nullable=True),
+              Column("sales_start_day", VARCHAR(30), nullable=True),
+              Column("head_sar_radiation", Float, nullable=True),
+              Column("body_sar_radiation", Float, nullable=True),
+              Column("contents_delivery", ARRAY(Text), nullable=True)
+              )
 
 with engine.connect() as conn:
     insert_query = smartphone_main.insert().values(
