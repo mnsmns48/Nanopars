@@ -4,15 +4,12 @@ from bs4 import BeautifulSoup
 
 from db_model import engine, \
     indicators, \
-    smartphone_main, \
-    display_model_dict, \
-    display, \
-    design_and_body_model_dict
+    smartphone_main
 
 
 def url_generator(link):
-    counter = 552
-    while counter != 560:
+    counter = 0
+    while counter != 5:
         result = link[counter]
         counter += 1
         yield result
@@ -37,9 +34,7 @@ def total_score_value(soup):
     return data
 
 
-def get_smartphone_main_data(soup):
-    title = soup.find('h1', class_="title-h1").text
-    brand = soup.find_all('span', class_='breadcrumbs-link')[1].find('a').text.split(' ')[1]
+def get_smartphone_main_data(soup, title, brand):
     advantage_ = soup.find('ul', class_='proscons-list two-columns-item').find_all('li')
     advantage = [i.text for i in advantage_]
     disadvantage_ = soup.find_all('ul', class_='proscons-list two-columns-item')[1].find_all('li')
@@ -54,11 +49,18 @@ def get_smartphone_main_data(soup):
             'final_score': final_score
         }
     ]
-    # for k, v in data[0].items():
-    #     print(k, ':', v)
-    # print('----------------------------------------------------------------------------------')
     return data
-    # def get_display_data(soup):
+
+
+def get_table_data(soup):
+    data = dict()
+    display_data_title = soup.find_all('td', class_='cell-h')
+    for index in display_data_title:
+        value = index.find_next('td', class_='cell-s')
+        if value:
+            data.update({index.text.strip(): value.text.strip()})
+    for key, value in data.items():
+        print(key, ':', value)
 
     # display_model_title = soup.find_all('table', class_='specs-table')[0].find_all('td', class_='cell-h')
     # display_model_value = soup.find_all('table', class_='specs-table')[0].find_all('td', class_='cell-s')
@@ -125,8 +127,6 @@ def get_smartphone_main_data(soup):
     # }])
 
 
-
-
 def start():
     headers = {'User-Agent':
                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
@@ -138,12 +138,15 @@ def start():
     for card_url in url_generator(card_url_list_):
         response = requests.get(card_url, headers=headers)
         soup_ = BeautifulSoup(response.text, 'lxml')
-        get_smartphone_main_data(soup_)
-        with engine.connect() as conn:
-            smartphone_main_query = smartphone_main.insert().values(get_smartphone_main_data(soup_))
-            conn.execute(smartphone_main_query)
-            conn.commit()
-        time.sleep(3)
+        title = soup_.find('h1', class_="title-h1").text
+        brand = soup_.find_all('span', class_='breadcrumbs-link')[1].find('a').text.split(' ')[1]
+        # get_smartphone_main_data(soup_, title, brand)
+        get_table_data(soup_)
+        # with engine.connect() as conn:
+        #     smartphone_main_query = smartphone_main.insert().values(get_smartphone_main_data(soup_, title, brand))
+        #     conn.execute(smartphone_main_query)
+        #     conn.commit()
+        time.sleep(10)
 
 
 if __name__ == "__main__":
