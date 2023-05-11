@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, MetaData, Text, Integer, Table, Column, AR
     SmallInteger, VARCHAR, select, text
 from sqlalchemy.orm import Session
 
-engine = create_engine('postgresql+psycopg2://postgres:534534@localhost:5432/phones',
+engine = create_engine('postgresql+psycopg2://baza:baza534@localhost:5432/phones',
                        echo=True)
 
 metadata = MetaData()
@@ -15,6 +15,34 @@ smartphone_main = Table('smartphone_main', metadata,
                         Column('final_score', SmallInteger)
                         )
 
+display = Table('display', metadata,
+                Column('title', VARCHAR(40), primary_key=True),
+                Column('brand', VARCHAR(10)),
+                Column('type', VARCHAR(15)),
+                Column('size', Float, nullable=True),
+                Column('resolution', VARCHAR(10), nullable=True),
+                Column('ratio', VARCHAR(10), nullable=True),
+                Column('pixel_density', SmallInteger, nullable=True),
+                Column('frequency', SmallInteger, nullable=True),
+                Column('adaptive_refresh_rate', Boolean, nullable=True),
+                Column('max_brightness', SmallInteger, nullable=True),
+                Column('hdr_suport', Boolean, nullable=True),
+                Column('display_protection', VARCHAR(20), nullable=True),
+                Column('display_total_score', SmallInteger)
+                )
+display_model_dict = {
+    'Тип': 'type_',
+    'Размер': 'size',
+    'Разрешение': 'resolution',
+    'Соотношение сторон': 'ratio',
+    'Плотность пикселей': 'pixel_density',
+    'Частота обновления': 'frequency',
+    'Адаптивная частота обновления': 'adaptive_refresh_rate',
+    'Макс. заявленная яркость': 'max_brightness',
+    'Поддержка HDR': 'hdr_suport',
+    'Защита дисплея': 'display_protection'
+}
+
 design_and_body = Table('design_and_body', metadata,
                         Column('title', VARCHAR(40), primary_key=True),
                         Column('brand', VARCHAR(10)),
@@ -26,9 +54,20 @@ design_and_body = Table('design_and_body', metadata,
                         Column('fingerprint_scanner', VARCHAR(15), nullable=True),
                         Column('backpanel_material', VARCHAR(10), nullable=True),
                         Column('frame_material', VARCHAR(10), nullable=True),
-                        Column('Colors', ARRAY(Text)),
+                        Column('colors', ARRAY(Text)),
                         Column('screen_to_body_ratio', VARCHAR(10), nullable=True)
                         )
+design_and_body_model_dict = {
+    'Высота': 'height',
+    'Ширина': 'wight',
+    'Толщина': 'thickness',
+    'Вес': 'weight',
+    'Водонепроницаемость': 'waterproof',
+    'Сканер отпечатков пальцев': 'fingerprint_scanner',
+    'Материал задней панели': 'backpanel_material',
+    'Материал рамки': 'frame_material',
+    'Доступные цвета': 'colors',
+}
 
 performance = Table('performance', metadata,
                     Column('title', VARCHAR(40), primary_key=True),
@@ -53,21 +92,6 @@ ram = Table('ram', metadata,
             Column('type', VARCHAR(10), nullable=True)
             )
 
-display = Table('display', metadata,
-                Column('title', VARCHAR(40), primary_key=True),
-                Column('brand', VARCHAR(10)),
-                Column('type', VARCHAR(15)),
-                Column('size', Float, nullable=True),
-                Column('resolution', VARCHAR(10), nullable=True),
-                Column('ratio', VARCHAR(10), nullable=True),
-                Column("pixel_density", SmallInteger, nullable=True),
-                Column("frequency", SmallInteger, nullable=True),
-                Column("adaptive_refresh_rate", Boolean, nullable=True),
-                Column("max_brightness", SmallInteger, nullable=True),
-                Column("hdr_suport", Boolean, nullable=True),
-                Column("display_protection", VARCHAR(20), nullable=True),
-                Column("display_total_score", SmallInteger)
-                )
 storage = Table('storage', metadata,
                 Column('title', VARCHAR(40), primary_key=True),
                 Column('brand', VARCHAR(10)),
@@ -75,6 +99,7 @@ storage = Table('storage', metadata,
                 Column('memorycard', Boolean, nullable=True),
                 Column('max_volume_card', SmallInteger, nullable=True)
                 )
+
 software = Table('software', metadata,
                  Column('title', VARCHAR(40), primary_key=True),
                  Column('brand', VARCHAR(10)),
@@ -145,19 +170,32 @@ other = Table('other', metadata,
               Column("body_sar_radiation", Float, nullable=True),
               Column("contents_delivery", ARRAY(Text), nullable=True)
               )
+indicators = {
+    'Дисплей': 'display_total_score',
+    'Камера': 'camera_total_score',
+    'Производительность': 'performance_total_score',
+    'Батарея': 'battery_total_score',
+    'Коммуникации': 'communications_total_score',
+    'Итоговая оценка': 'total_score_value',
+    'Соотношение экрана к корпусу': 'screen_to_body_ratio',
+    'Geekbench 5 (одноядерный)': 'geekbench_singlecore',
+    'Geekbench 5 (многоядерный)': 'geekbench_multicore',
+    'AnTuTu Benchmark 9': 'antutu'
+}
 
-with engine.connect() as conn:
-    insert_query = smartphone_main.insert().values(
-        [
-            {'title': 'Samsung A55',
-             'brand': 'Samsung',
-             'advantage': ["nnn", "mmmm"],
-             'disadvantage': ["dsfsdf", "mfdgsdfgmmm"],
-             'final_score': 5}
-        ]
-    )
-    conn.execute(insert_query)
-    conn.commit()
+# with engine.connect() as conn:
+#     insert_query = smartphone_main.insert().values(
+#         [
+#             {'title': 'Samsung A55',
+#              'brand': 'Samsung',
+#              'advantage': ["nnn", "mmmm"],
+#              'disadvantage': ["dsfsdf", "mfdgsdfgmmm"],
+#              'final_score': 5}
+#         ]
+#     )
+#     conn.execute(insert_query)
+#     conn.commit()
+
 
 # with engine.connect() as conn:
 #     result = smartphone_main.c.title
