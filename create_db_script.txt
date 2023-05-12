@@ -1,0 +1,210 @@
+CREATE TABLE "main" (
+	"title" VARCHAR(40) NOT NULL UNIQUE,
+	"brand" VARCHAR(10) NOT NULL,
+	"category" VARCHAR(15),
+	"advantage" TEXT[],
+	"disadvantage" TEXT[],
+	"total_score" integer,
+	"announced" VARCHAR(7),
+	"release_date" VARCHAR(7),
+	CONSTRAINT "main_pk" PRIMARY KEY ("title")
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "display" (
+	"title" VARCHAR(40) NOT NULL UNIQUE,
+	"brand" VARCHAR(10) NOT NULL,
+	"total_value" Inetger,
+    "display_type" VARCHAR(20),
+    "size" Float,
+    "resolution" VARCHAR(15),
+    "refresh_rate" Integer,
+    "peak_brightness_test_auto" Integer,
+    "max_rated_brightness" Integer,
+    "max_rated_brightness_in_hdr" Integer,
+    "ppi" Integer,
+    "adaptive_refresh_rate" Boolean,
+    "hdr_support" VARCHAR(15),
+    "screen_protection" VARCHAR(30),
+    "pwm" Integer,
+    "screen_to_body_ratio" Float,
+    "contrast" VARCHAR(20),
+    "response_time" Integer,
+    "display_features" TEXT[],
+    "rgb_color_space" Float,
+    "aspect_ratio" VARCHAR(10)
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "performance" (
+	"title" VARCHAR(40) NOT NULL UNIQUE,
+	"brand" VARCHAR(10) NOT NULL,
+	"total_value" Integer,
+    "chipset" VARCHAR(50),
+    "max_clock" Integer,
+    "ram_size" Integer[],
+    "memory_type" VARCHAR(10),
+    "channels" Integer,
+    "storage_size" Integer[],
+    "storage_type" VARCHAR(15),
+    "memory_card" Boolean,
+    "cpu_cores" VARCHAR(25),
+    "architecture" TEXT[],
+    "l3_cache" Integer,
+    "lithography_process" Integer,
+    "graphics" VARCHAR(20),
+    "gpu_clock" Integer,
+    "gaming" Integer,
+    "geekbench_5_singlecore" Integer,
+    "geekbench_5_multicore" Integer,
+    "antutu_benchmark_9" Integer,
+    "3dmark_wild_life_performance" Integer,
+    "pcmark_3" Integer,
+    "flops" Integer,
+    "cpu" Integer,
+    "gpu" Integer,
+    "memory" Integer,
+    "ux" Integer,
+    "total_score" Integer,
+    "max_surface_temperature" VARCHAR(10),
+    "stability" Integer,
+    "graphics_test" Integer,
+    "graphics_score" Integer,
+    "web_score" Integer,
+    "video_editing" Integer,
+    "photo_editing" Integer,
+    "data_manipulation" Integer,
+    "writing_score" Integer
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "camera" (
+	"title" VARCHAR(40) NOT NULL UNIQUE,
+	"brand" VARCHAR(10) NOT NULL,
+    "total_value" Integer,
+    "matrix_main" Integer,
+    "image_resolution_main" VARCHAR(15),
+    "zoom" VARCHAR(20),
+    "flash" VARCHAR(15),
+    "stabilization" VARCHAR(15),
+    "lenses" VARCHAR(20),
+    "wide_main_lens" TEXT[],
+    "telephoto_lens" TEXT[],
+    "ultra_wide_lens" TEXT[],
+    "photo_quality" Integer,
+    "video_quality" Integer,
+    "generic_camera_score" Integer,
+    "angle_of_widest_lens" VARCHAR(10),
+    "slow_motion" VARCHAR(40),
+    "1080p_video_recording" VARCHAR(30),
+    "4k_video_recording" VARCHAR(30),
+    "8k_video_recording" VARCHAR(30),
+    "megapixels_front" Integer,
+    "image_resolution_front" VARCHAR(12),
+    "aperture_front" VARCHAR(10),
+    "focal_length_front" Integer,
+    "pixel_size_front" FLoat,
+    "sensor_type" VARCHAR(20),
+    "sensor_size" VARCHAR(20),
+    "video_resolution" VARCHAR(30),
+    "camera_features" TEXT[]
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "energy" (
+	"title" VARCHAR(40) NOT NULL UNIQUE,
+	"brand" VARCHAR(10) NOT NULL,
+    "total_value" Integer,
+    "capacity" Integer,
+    "max_charge_power" Integer,
+    "battery_type" VARCHAR(35),
+    "replaceable" Boolean,
+    "wireless_charging" VARCHAR(30),
+    "reverse_charging" VARCHAR(30),
+    "fast_charging" VARCHAR(30),
+    "full_charging_time" VARCHAR(15),
+    "general_battery_life" VARCHAR(15),
+    "web_browsing" VARCHAR(15),
+    "watching_video" VARCHAR(15),
+    "gaming_time" VARCHAR(15),
+    "standby" VARCHAR(15)
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "communication" (
+	"title" VARCHAR(40) NOT NULL UNIQUE,
+	"brand" VARCHAR(10) NOT NULL,
+    "total_value" Integer,
+    "nfc" VARCHAR(10),
+    "number_of_sim" Integer,
+    "esim_support" Boolean,
+    "hybrid_slot" Boolean,
+    "wifi_standard" VARCHAR(40),
+    "wifi_features" TEXT[],
+    "bluetooth_version" VARCHAR(20),
+    "usb_type" VARCHAR(20),
+    "usb_version" Float,
+    "usb_features" TEXT[],
+    "gps" TEXT[],
+    "infrared_port" Boolean,
+    "type_of_sim_card" VARCHAR(10),
+    "multi_sim_mode" VARCHAR(15),
+    "3g_network" Boolean,
+    "4g_network" Boolean,
+    "5g_support" Boolean
+ ) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "physical_parameters" (
+	"title" VARCHAR(40) NOT NULL UNIQUE,
+	"brand" VARCHAR(10) NOT NULL,
+    "height" Float,
+    "width" Float,
+    "thickness" Float,
+    "weight" Float,
+    "waterproof" VARCHAR(20),
+    "colors" TEXT[],
+    "max_loudness" Float,
+    "advanced_cooling" VARCHAR(30),
+    "rear_material" VARCHAR(20),
+    "frame_material" VARCHAR(20),
+    "fingerprint_scanner" VARCHAR(30),
+    "operating_system" VARCHAR(20),
+    "rom" VARCHAR(20),
+    "os_size" Float,
+    "speakers" VARCHAR(20),
+    "headphone_audio_jack" Boolean,
+    "fm_radio" Boolean,
+    "dolby_atmos" Boolean,
+    "sar_head" Float,
+    "sar_body" Float,
+    "sensors" TEXT[],
+    "charger_out_of_the_box" VARCHAR(40)
+  ) WITH (
+  OIDS=FALSE
+);
+
+ALTER TABLE "display" ADD CONSTRAINT "display_fk0" FOREIGN KEY ("title") REFERENCES "main"("title");
+ALTER TABLE "performance" ADD CONSTRAINT "performance_fk0" FOREIGN KEY ("title") REFERENCES "main"("title");
+ALTER TABLE "camera" ADD CONSTRAINT "camera_fk0" FOREIGN KEY ("title") REFERENCES "main"("title");
+ALTER TABLE "energy" ADD CONSTRAINT "energy_fk0" FOREIGN KEY ("title") REFERENCES "main"("title");
+ALTER TABLE "communication" ADD CONSTRAINT "communication_fk0" FOREIGN KEY ("title") REFERENCES "main"("title");
+ALTER TABLE "physical_parameters" ADD CONSTRAINT "physical_parameters_fk0" FOREIGN KEY ("title") REFERENCES "main"("title");
+
+
+
+
+
+
+
+
+
+
+
+
