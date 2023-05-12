@@ -2,129 +2,73 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-from db_model import engine, \
-    indicators, \
-    smartphone_main
+from db_models import main_model, display_model, performance_model, camera_model, energy_model, communication_model, \
+    physical_parameters_model
+from db_tables import engine, \
+    s_main, display, performance, camera, energy, communication, physical_parameters
+from dict_correction import dict_c
+
+
+def error_handler(a_dict: dict, arg: str, type_: type):
+    try:
+        value = a_dict.get(arg)
+        if value:
+            return type_(value)
+    except AttributeError:
+        pass
 
 
 def url_generator(link):
-    counter = 0
-    while counter != 5:
+    counter = 1
+    while counter != 10:
         result = link[counter]
         counter += 1
         yield result
 
 
-def total_score_value(soup):
+def cross_dicts(data: dict, model: dict) -> dict:
+    cross_dict_ = dict()
+    for key, value in model.items():
+        cross_dict_.update({value: data.get(key)})
+    return cross_dict_
+
+
+def get_data(soup: BeautifulSoup) -> dict:
     data = dict()
+    brand = soup.find_all('span', class_='breadcrumbs-link')[1].find('a').text.split(' ')[1]
+    title = soup.find('h1', class_="title-h1").text
+    data.update({'brand': brand, 'title': title})
+    advantage_ = soup.find('ul', class_='proscons-list two-columns-item').find_all('li')
+    advantage = [i.text for i in advantage_]
+    disadvantage_ = soup.find_all('ul', class_='proscons-list two-columns-item')[1].find_all('li')
+    disadvantage = [i.text for i in disadvantage_]
+    data.update({'Advantage': advantage, 'Disadvantage': disadvantage})
     total_score_model_title = soup.find_all('div', class_='score-bar-name')
     for index in total_score_model_title:
         value = index.find_next('span', class_='score-bar-result-square') \
                 or index.find_next('span', class_='score-bar-result-square-dark') \
                 or index.find_next('span', class_='score-bar-result-number')
         if value:
-            data.update({str(index.text.strip()): value.text.replace('*', '').strip()})
+            if index.text.strip() in data.keys():
+                index = str(index.text.strip()) + ' -2-'
+            else:
+                index = index.text.strip()
+            data.update({str(index): value.text.replace('*', '').strip()})
     total_score_model_value_red = soup.find_all('span', class_='score-bar-result-number-review')
     for value in total_score_model_value_red:
         index = value.find_previous('div', class_='score-bar-name')
         data.update({index.text.strip(): value.text.replace('*', '').strip()})
-    result = data.keys() - indicators.keys()
-    for key in result:
-        data.pop(key)
-    return data
-
-
-def get_smartphone_main_data(soup, title, brand):
-    advantage_ = soup.find('ul', class_='proscons-list two-columns-item').find_all('li')
-    advantage = [i.text for i in advantage_]
-    disadvantage_ = soup.find_all('ul', class_='proscons-list two-columns-item')[1].find_all('li')
-    disadvantage = [i.text for i in disadvantage_]
-    final_score = total_score_value(soup).get('Итоговая оценка')
-    data = [
-        {
-            'title': title,
-            'brand': brand,
-            'advantage': advantage,
-            'disadvantage': disadvantage,
-            'final_score': final_score
-        }
-    ]
-    return data
-
-
-def get_table_data(soup):
-    data = dict()
     display_data_title = soup.find_all('td', class_='cell-h')
     for index in display_data_title:
         value = index.find_next('td', class_='cell-s')
         if value:
-            data.update({index.text.strip(): value.text.strip()})
-    for key, value in data.items():
-        print(key, ':', value)
-
-    # display_model_title = soup.find_all('table', class_='specs-table')[0].find_all('td', class_='cell-h')
-    # display_model_value = soup.find_all('table', class_='specs-table')[0].find_all('td', class_='cell-s')
-    # for line, line2 in zip(display_model_title, display_model_value):
-    #     if display_model_dict.get(line.text):
-    #         locals().update({display_model_dict.get(line.text): line2.text})
-    # data.append([{
-    #     'title': title,
-    #     'brand': brand,
-    #     'type': locals().get('type_'),
-    #     'size': str(locals().get('size')).split(' ')[0],
-    #     'resolution': str(locals().get('resolution')).rsplit(' ', maxsplit=1)[0],
-    #     'ratio': locals().get('ratio'),
-    #     'pixel_density': str(locals().get('pixel_density')).split(' ')[0],
-    #     'frequency': str(locals().get('frequency')).split(' ')[0],
-    #     'adaptive_refresh_rate': True if locals().get('adaptive_refresh_rate') == 'Да' else False,
-    #     'max_brightness': str(locals().get('max_brightness')).split(' ')[0],
-    #     'hdr_suport': False if locals().get('hdr_suport') == 'Нет' else True,
-    #     'display_protection': locals().get('display_protection'),
-    #     'display_total_score': final_score[0]
-    # }])
-    # design_and_body_model_title = soup.find_all('table', class_='specs-table')[1].find_all('td', class_='cell-h')
-    # design_and_body_model_value = soup.find_all('table', class_='specs-table')[1].find_all('td', class_='cell-s')
-    # for line, line2 in zip(design_and_body_model_title, design_and_body_model_value):
-    #     if design_and_body_model_dict.get(line.text):
-    #         locals().update({design_and_body_model_dict.get(line.text): line2.text})
-    # screen_to_body_ratio = soup.find_all('div', class_='score-bar-name')
-    # data.append([{
-    #     'title': title,
-    #     'brand': brand,
-    #     'height': str(locals().get('height')).split(' ')[0],
-    #     'wight': str(locals().get('wight')).split(' ')[0],
-    #     'thickness': str(locals().get('thickness')).split(' ')[0],
-    #     'weight': str(locals().get('weight')).split(' ')[0],
-    #     'waterproof': False if locals().get('waterproof') == 'Нет' else True,
-    #     'fingerprint_scanner': locals().get('fingerprint_scanner'),
-    #     'backpanel_material': locals().get('backpanel_material'),
-    #     'frame_material': locals().get('frame_material'),
-    #     'colors': locals().get('colors'),
-    #     'screen_to_body_ratio': 'в процессе'
-    # }])
-    # print(screen_to_body_ratio)
-    # return data
-    # for k,v in data[0][0].items():
-    #     print(k, ':', v)
-    # print('-------------')
-    # for k,v in data[2][0].items():
-    #     print(k, ':', v)
-    # concatenated_data_block = soup.find_all('table', class_='specs-table')[1].find_all('td', class_='cell-s')
-    # height = concatenated_data_block.text.split(' ')[0]
-    # wight = concatenated_data_block[1].text.split(' ')[0]
-    # thickness = concatenated_data_block[2].text.split(' ')[0]
-    # weight = concatenated_data_block[3].text.split(' ')[0]
-    # waterproof = False if concatenated_data_block[4].text.split(' ')[0] == 'Нет' else True
-    # fingerprint_scanner = str()
-    # data.append([{
-    #     'title': title,
-    #     'brand': brand,
-    #     'height': height,
-    #     'wight': wight,
-    #     'thickness': thickness,
-    #     'weight': weight
-    #
-    # }])
+            if index.text.strip() in data.keys():
+                index = str(index.text.strip()) + ' -2-'
+            else:
+                index = index.text.strip()
+            data.update({str(index): value.text.strip()})
+    result = dict_c(data)
+    return result
 
 
 def start():
@@ -136,17 +80,26 @@ def start():
         result_reading = card_file.read()
         card_url_list_ = result_reading.split('\n')
     for card_url in url_generator(card_url_list_):
-        response = requests.get(card_url, headers=headers)
+        response = requests.get(card_url, headers=headers, timeout=3)
         soup_ = BeautifulSoup(response.text, 'lxml')
-        title = soup_.find('h1', class_="title-h1").text
-        brand = soup_.find_all('span', class_='breadcrumbs-link')[1].find('a').text.split(' ')[1]
-        # get_smartphone_main_data(soup_, title, brand)
-        get_table_data(soup_)
-        # with engine.connect() as conn:
-        #     smartphone_main_query = smartphone_main.insert().values(get_smartphone_main_data(soup_, title, brand))
-        #     conn.execute(smartphone_main_query)
-        #     conn.commit()
-        time.sleep(10)
+        with engine.connect() as conn:
+            smartphone_main_query = s_main.insert().values(cross_dicts(get_data(soup_), main_model))
+            display_query = display.insert().values(cross_dicts(get_data(soup_), display_model))
+            performance_query = performance.insert().values(cross_dicts(get_data(soup_), performance_model))
+            camera_query = camera.insert().values(cross_dicts(get_data(soup_), camera_model))
+            energy_query = energy.insert().values(cross_dicts(get_data(soup_), energy_model))
+            communication_query = communication.insert().values(cross_dicts(get_data(soup_), communication_model))
+            physical_parameters_query = physical_parameters.insert().values(
+                cross_dicts(get_data(soup_), physical_parameters_model))
+            conn.execute(smartphone_main_query)
+            conn.execute(display_query)
+            conn.execute(performance_query)
+            conn.execute(camera_query)
+            conn.execute(energy_query)
+            conn.execute(communication_query)
+            conn.execute(physical_parameters_query)
+            conn.commit()
+        time.sleep(5)
 
 
 if __name__ == "__main__":
