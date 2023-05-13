@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, MetaData, Text, Integer, Table, Column, AR
     SmallInteger, VARCHAR, select, text
 from sqlalchemy.orm import Session
 
-engine = create_engine('postgresql+psycopg2://baza:baza534@localhost:5432/phones',
+engine = create_engine('postgresql+psycopg2://postgres:534534@localhost:5432/phones',
                        echo=True)
 
 metadata = MetaData()

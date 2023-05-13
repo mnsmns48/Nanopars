@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from db_models import main_model, display_model, performance_model, camera_model, energy_model, communication_model, \
-    physical_parameters_model
+    physical_parameters_model, processing_model
 from db_tables import engine, \
     s_main, display, performance, camera, energy, communication, physical_parameters
 from dict_correction import dict_c
@@ -19,18 +19,26 @@ def error_handler(a_dict: dict, arg: str, type_: type):
 
 
 def url_generator(link):
-    counter = 1
-    while counter != 10:
+    counter = 0
+    while counter != 1:
         result = link[counter]
         counter += 1
         yield result
 
 
-def cross_dicts(data: dict, model: dict) -> dict:
+def edit_dicts(data: dict, model: dict) -> dict:
     cross_dict_ = dict()
-    for key, value in model.items():
-        cross_dict_.update({value: data.get(key)})
-    return cross_dict_
+    for i in range(1):
+        for k, v in model[i].items():
+            if v[1] in processing_model.keys():
+                cross_dict_.update({v[0]: processing_model.get(v[1])(data.get(v[0]))})
+    for k, v in cross_dict_.items():
+        print(k, ':', v)
+
+    #
+    # for key, value in model.items():
+    #     cross_dict_.update({value: data.get(key)})
+    # return cross_dict_
 
 
 def get_data(soup: BeautifulSoup) -> dict:
@@ -67,8 +75,9 @@ def get_data(soup: BeautifulSoup) -> dict:
             else:
                 index = index.text.strip()
             data.update({str(index): value.text.strip()})
-    result = dict_c(data)
-    return result
+    return data
+    # result = dict_c(data)
+    # return result
 
 
 def start():
@@ -82,24 +91,25 @@ def start():
     for card_url in url_generator(card_url_list_):
         response = requests.get(card_url, headers=headers, timeout=3)
         soup_ = BeautifulSoup(response.text, 'lxml')
-        with engine.connect() as conn:
-            smartphone_main_query = s_main.insert().values(cross_dicts(get_data(soup_), main_model))
-            display_query = display.insert().values(cross_dicts(get_data(soup_), display_model))
-            performance_query = performance.insert().values(cross_dicts(get_data(soup_), performance_model))
-            camera_query = camera.insert().values(cross_dicts(get_data(soup_), camera_model))
-            energy_query = energy.insert().values(cross_dicts(get_data(soup_), energy_model))
-            communication_query = communication.insert().values(cross_dicts(get_data(soup_), communication_model))
-            physical_parameters_query = physical_parameters.insert().values(
-                cross_dicts(get_data(soup_), physical_parameters_model))
-            conn.execute(smartphone_main_query)
-            conn.execute(display_query)
-            conn.execute(performance_query)
-            conn.execute(camera_query)
-            conn.execute(energy_query)
-            conn.execute(communication_query)
-            conn.execute(physical_parameters_query)
-            conn.commit()
-        time.sleep(5)
+        edit_dicts(get_data(soup_), main_model)
+        # with engine.connect() as conn:
+        #     smartphone_main_query = s_main.insert().values(cross_dicts(get_data(soup_), main_model))
+        #     display_query = display.insert().values(cross_dicts(get_data(soup_), display_model))
+        #     performance_query = performance.insert().values(cross_dicts(get_data(soup_), performance_model))
+        #     camera_query = camera.insert().values(cross_dicts(get_data(soup_), camera_model))
+        #     energy_query = energy.insert().values(cross_dicts(get_data(soup_), energy_model))
+        #     communication_query = communication.insert().values(cross_dicts(get_data(soup_), communication_model))
+        #     physical_parameters_query = physical_parameters.insert().values(
+        #         cross_dicts(get_data(soup_), physical_parameters_model))
+        #     conn.execute(smartphone_main_query)
+        #     conn.execute(display_query)
+        #     conn.execute(performance_query)
+        #     conn.execute(camera_query)
+        #     conn.execute(energy_query)
+        #     conn.execute(communication_query)
+        #     conn.execute(physical_parameters_query)
+        # conn.commit()
+        # time.sleep(10)
 
 
 if __name__ == "__main__":
