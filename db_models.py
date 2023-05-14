@@ -29,7 +29,7 @@ display_model = {
     'brand': ['brand', 'None'],
     'Дисплей': ['total_value', 'int_'],
     'Тип': ['display_type', 'None'],
-    'Размер': ['size', 'to_float'],
+    'Размер': ['d_size', 'to_float'],
     'Разрешение': ['resolution', 'rsplit_str'],
     'Частота обновления': ['refresh_rate', 'to_int'],
     'Реальная пиковая яркость (авто)': ['peak_brightness_test_auto', 'to_int'],

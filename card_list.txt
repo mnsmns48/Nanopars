@@ -1,4 +1,3 @@
-https://nanoreview.net/ru/phone/samsung-galaxy-s23-plus
 https://nanoreview.net/ru/phone/realme-gt-neo-5-se
 https://nanoreview.net/ru/phone/oppo-realme-c55
 https://nanoreview.net/ru/phone/oppo-realme-gt3
@@ -839,3 +838,12 @@ https://nanoreview.net/ru/phone/tecno-camon-17p
 https://nanoreview.net/ru/phone/tecno-camon-17-pro
 https://nanoreview.net/ru/phone/infinix-hot-10s
 https://nanoreview.net/ru/phone/infinix-note-8
+https://nanoreview.net/ru/phone/realme-11
+https://nanoreview.net/ru/phone/realme-11-pro
+https://nanoreview.net/ru/phone/realme-11-pro-plus
+https://nanoreview.net/ru/phone/xiaomi-poco-f5
+https://nanoreview.net/ru/phone/xiaomi-poco-f5-pro
+https://nanoreview.net/ru/phone/sony-xperia-10-v
+https://nanoreview.net/ru/phone/sony-xperia-1-v
+https://nanoreview.net/ru/phone/google-pixel-fold
+https://nanoreview.net/ru/phone/google-pixel-7a

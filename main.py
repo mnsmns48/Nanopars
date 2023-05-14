@@ -5,13 +5,45 @@ from sqlalchemy.exc import IntegrityError
 
 from db_models import main_model, display_model, performance_model, camera_model, energy_model, communication_model, \
     physical_parameters_model, processing_model
-from db_tables import engine, \
-    s_main, display, performance, camera, energy, communication, physical_parameters
+from db_tables import *
+
+headers = {'User-Agent':
+               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+               'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 '
+               'Safari/537.36 OPR/98.0.0.0'}
 
 
-def url_generator(link):
-    counter = 626
-    while counter != len(link):
+def find_new_items() -> bool:
+    prefix = 'https://nanoreview.net'
+    new_link_list = list()
+    with open('card_list.txt', 'r') as f:
+        old_card_list = f.read().split('\n')
+    with open('url_list.txt', 'r') as f:
+        brands_list = f.read().split('\n')
+    for brand in brands_list:
+        response = requests.get(url=brand, headers=headers, timeout=3)
+        soup_ = BeautifulSoup(response.text, 'lxml')
+        links = soup_.find_all('a', style='font-weight:500;')
+        for link in links:
+            if prefix + link.get('href') in old_card_list:
+                pass
+            else:
+                new_link_list.append(prefix + link.get('href'))
+    if len(new_link_list) > 0:
+        for i in new_link_list:
+            print('Добавление в базу', i.rsplit('/', 1)[-1])
+        file_ = open('new_phones_list.txt', 'w')
+        for url_line in new_link_list:
+            file_.write(url_line + '\n')
+        file_.close()
+        return True
+    else:
+        print('Нет новых моделей\nPASS')
+
+
+def url_generator(link: list[str]):
+    counter = 0
+    while counter != len(link) - 1:
         result = link[counter]
         counter += 1
         yield result
@@ -86,19 +118,21 @@ def write_in_db(soup: BeautifulSoup) -> None:
 
 
 def start():
-    headers = {'User-Agent':
-                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                   'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 '
-                   'Safari/537.36 OPR/98.0.0.0'}
-    with open('card_list.txt', 'r') as card_file:
+    with open('new_phones_list.txt', 'r') as card_file:
         result_reading = card_file.read()
         card_url_list_ = result_reading.split('\n')
     for card_url in url_generator(card_url_list_):
-        response = requests.get(card_url, headers=headers, timeout=2)
+        response = requests.get(card_url, headers=headers, timeout=3)
         soup_ = BeautifulSoup(response.text, 'lxml')
         write_in_db(soup_)
-        time.sleep(2)
+        time.sleep(3)
+    with open('card_list.txt', 'a') as file_:
+        file_.write('\n')
+        for line in result_reading:
+            file_.write(line)
+    file_.close()
 
 
 if __name__ == "__main__":
-    start()
+    if find_new_items():
+        start()

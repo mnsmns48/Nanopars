@@ -1,29 +1,27 @@
 from sqlalchemy import create_engine, MetaData, Text, Integer, Table, Column, ARRAY, Float, Boolean, \
-    SmallInteger, VARCHAR, select, text
-from sqlalchemy.orm import Session
+    SmallInteger, VARCHAR
 
-engine = create_engine('postgresql+psycopg2://baza:baza534@localhost:5432/phones',
+engine = create_engine('postgresql+psycopg2://postgres:534534@localhost:5432/phones',
                        echo=True)
-
 metadata = MetaData()
 
 s_main = Table('main', metadata,
-             Column('title', VARCHAR(40), primary_key=True),
-             Column('brand', VARCHAR(10)),
-             Column('category', VARCHAR(15), nullable=True),
-             Column('advantage', ARRAY(Text), nullable=True),
-             Column('disadvantage', ARRAY(Text), nullable=True),
-             Column('total_score', SmallInteger, nullable=True),
-             Column('announced', VARCHAR(7), nullable=True),
-             Column('release_date', VARCHAR(7), nullable=True)
-             )
+               Column('title', VARCHAR(40), primary_key=True),
+               Column('brand', VARCHAR(10)),
+               Column('category', VARCHAR(15), nullable=True),
+               Column('advantage', ARRAY(Text), nullable=True),
+               Column('disadvantage', ARRAY(Text), nullable=True),
+               Column('total_score', SmallInteger, nullable=True),
+               Column('announced', VARCHAR(7), nullable=True),
+               Column('release_date', VARCHAR(7), nullable=True)
+               )
 
 display = Table('display', metadata,
                 Column('title', VARCHAR(40), primary_key=True),
                 Column('brand', VARCHAR(10)),
                 Column('total_value', VARCHAR(15), nullable=True),
                 Column('display_type', VARCHAR(20), nullable=True),
-                Column('size', Float, nullable=True),
+                Column('d_size', Float, nullable=True),
                 Column('resolution', VARCHAR(15), nullable=True),
                 Column('refresh_rate', SmallInteger, nullable=True),
                 Column('peak_brightness_test_auto', SmallInteger, nullable=True),
@@ -181,13 +179,3 @@ physical_parameters = Table('physical_parameters', metadata,
                             Column('sensors', ARRAY(Text), nullable=True),
                             Column('charger_out_of_the_box', VARCHAR(20), nullable=True)
                             )
-
-
-# with engine.connect() as conn:
-#     result = smartphone_main.c.title
-#     print(result)
-
-# with Session(engine) as sess:
-#     result = sess.execute(
-#         select(smartphone_main.c.final_score).where(smartphone_main.c.title == 'Samsung A55'))
-#     print(result.scalar())
