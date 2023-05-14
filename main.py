@@ -1,44 +1,20 @@
 import time
 import requests
 from bs4 import BeautifulSoup
+from sqlalchemy.exc import IntegrityError
 
 from db_models import main_model, display_model, performance_model, camera_model, energy_model, communication_model, \
     physical_parameters_model, processing_model
 from db_tables import engine, \
     s_main, display, performance, camera, energy, communication, physical_parameters
-from dict_correction import dict_c
-
-
-def error_handler(a_dict: dict, arg: str, type_: type):
-    try:
-        value = a_dict.get(arg)
-        if value:
-            return type_(value)
-    except AttributeError:
-        pass
 
 
 def url_generator(link):
-    counter = 0
-    while counter != 1:
+    counter = 626
+    while counter != len(link):
         result = link[counter]
         counter += 1
         yield result
-
-
-def edit_dicts(data: dict, model: dict) -> dict:
-    cross_dict_ = dict()
-    for i in range(1):
-        for k, v in model[i].items():
-            if v[1] in processing_model.keys():
-                cross_dict_.update({v[0]: processing_model.get(v[1])(data.get(v[0]))})
-    for k, v in cross_dict_.items():
-        print(k, ':', v)
-
-    #
-    # for key, value in model.items():
-    #     cross_dict_.update({value: data.get(key)})
-    # return cross_dict_
 
 
 def get_data(soup: BeautifulSoup) -> dict:
@@ -76,8 +52,37 @@ def get_data(soup: BeautifulSoup) -> dict:
                 index = index.text.strip()
             data.update({str(index): value.text.strip()})
     return data
-    # result = dict_c(data)
-    # return result
+
+
+def edit_dicts(data: dict, model: dict) -> dict:
+    cross_dict_ = dict()
+    for key, value in model.items():
+        if key in data.keys():
+            cross_dict_.update({value[0]: processing_model.get(value[1])(data.get(key))})
+    return cross_dict_
+
+
+def write_in_db(soup: BeautifulSoup) -> None:
+    with engine.connect() as conn:
+        smartphone_main_query = s_main.insert().values(edit_dicts(get_data(soup), main_model))
+        display_query = display.insert().values(edit_dicts(get_data(soup), display_model))
+        performance_query = performance.insert().values(edit_dicts(get_data(soup), performance_model))
+        camera_query = camera.insert().values(edit_dicts(get_data(soup), camera_model))
+        energy_query = energy.insert().values(edit_dicts(get_data(soup), energy_model))
+        communication_query = communication.insert().values(edit_dicts(get_data(soup), communication_model))
+        physical_parameters_query = physical_parameters.insert().values(
+            edit_dicts(get_data(soup), physical_parameters_model))
+        try:
+            conn.execute(smartphone_main_query)
+            conn.execute(display_query)
+            conn.execute(performance_query)
+            conn.execute(camera_query)
+            conn.execute(energy_query)
+            conn.execute(communication_query)
+            conn.execute(physical_parameters_query)
+            conn.commit()
+        except IntegrityError:
+            pass
 
 
 def start():
@@ -89,27 +94,10 @@ def start():
         result_reading = card_file.read()
         card_url_list_ = result_reading.split('\n')
     for card_url in url_generator(card_url_list_):
-        response = requests.get(card_url, headers=headers, timeout=3)
+        response = requests.get(card_url, headers=headers, timeout=2)
         soup_ = BeautifulSoup(response.text, 'lxml')
-        edit_dicts(get_data(soup_), main_model)
-        # with engine.connect() as conn:
-        #     smartphone_main_query = s_main.insert().values(cross_dicts(get_data(soup_), main_model))
-        #     display_query = display.insert().values(cross_dicts(get_data(soup_), display_model))
-        #     performance_query = performance.insert().values(cross_dicts(get_data(soup_), performance_model))
-        #     camera_query = camera.insert().values(cross_dicts(get_data(soup_), camera_model))
-        #     energy_query = energy.insert().values(cross_dicts(get_data(soup_), energy_model))
-        #     communication_query = communication.insert().values(cross_dicts(get_data(soup_), communication_model))
-        #     physical_parameters_query = physical_parameters.insert().values(
-        #         cross_dicts(get_data(soup_), physical_parameters_model))
-        #     conn.execute(smartphone_main_query)
-        #     conn.execute(display_query)
-        #     conn.execute(performance_query)
-        #     conn.execute(camera_query)
-        #     conn.execute(energy_query)
-        #     conn.execute(communication_query)
-        #     conn.execute(physical_parameters_query)
-        # conn.commit()
-        # time.sleep(10)
+        write_in_db(soup_)
+        time.sleep(2)
 
 
 if __name__ == "__main__":

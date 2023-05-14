@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, MetaData, Text, Integer, Table, Column, AR
     SmallInteger, VARCHAR, select, text
 from sqlalchemy.orm import Session
 
-engine = create_engine('postgresql+psycopg2://postgres:534534@localhost:5432/phones',
+engine = create_engine('postgresql+psycopg2://baza:baza534@localhost:5432/phones',
                        echo=True)
 
 metadata = MetaData()
@@ -31,7 +31,7 @@ display = Table('display', metadata,
                 Column('max_rated_brightness_in_hdr', SmallInteger, nullable=True),
                 Column('ppi', SmallInteger, nullable=True),
                 Column('adaptive_refresh_rate', Boolean, nullable=True),
-                Column('hdr_support', VARCHAR(15), nullable=True),
+                Column('hdr_support', VARCHAR(30), nullable=True),
                 Column('screen_protection', VARCHAR(30), nullable=True),
                 Column('pwm', SmallInteger, nullable=True),
                 Column('screen_to_body_ratio', Float, nullable=True),
@@ -58,7 +58,7 @@ performance = Table('performance', metadata,
                     Column('architecture', ARRAY(Text), nullable=True),
                     Column('l3_cache', SmallInteger, nullable=True),
                     Column('lithography_process', SmallInteger, nullable=True),
-                    Column('graphics', VARCHAR(20), nullable=True),
+                    Column('graphics', VARCHAR(35), nullable=True),
                     Column('gpu_clock', SmallInteger, nullable=True),
                     Column('gaming', SmallInteger, nullable=True),
                     Column('geekbench_5_singlecore', SmallInteger, nullable=True),
@@ -89,10 +89,10 @@ camera = Table('camera', metadata,
                Column('total_value', SmallInteger, nullable=True),
                Column('matrix_main', SmallInteger, nullable=True),
                Column('image_resolution_main', VARCHAR(15), nullable=True),
-               Column('zoom', VARCHAR(20), nullable=True),
+               Column('zoom', VARCHAR(50), nullable=True),
                Column('flash', VARCHAR(15), nullable=True),
                Column('stabilization', VARCHAR(15), nullable=True),
-               Column('lenses', VARCHAR(30), nullable=True),
+               Column('lenses', VARCHAR(40), nullable=True),
                Column('wide_main_lens', ARRAY(Text), nullable=True),
                Column('telephoto_lens', ARRAY(Text), nullable=True),
                Column('ultra_wide_lens', ARRAY(Text), nullable=True),
@@ -104,10 +104,10 @@ camera = Table('camera', metadata,
                Column('1080p_video_recording', VARCHAR(30), nullable=True),
                Column('4k_video_recording', VARCHAR(30), nullable=True),
                Column('8k_video_recording', VARCHAR(30), nullable=True),
-               Column('megapixels_front', SmallInteger, nullable=True),
+               Column('megapixels_front', Float, nullable=True),
                Column('image_resolution_front', VARCHAR(12), nullable=True),
                Column('aperture_front', VARCHAR(10), nullable=True),
-               Column('focal_length_front', SmallInteger, nullable=True),
+               Column('focal_length_front', Float, nullable=True),
                Column('pixel_size_front', Float, nullable=True),
                Column('sensor_type', VARCHAR(20), nullable=True),
                Column('sensor_size', VARCHAR(20), nullable=True),
@@ -120,7 +120,7 @@ energy = Table('energy', metadata,
                Column('brand', VARCHAR(10)),
                Column('total_value', SmallInteger, nullable=True),
                Column('capacity', SmallInteger, nullable=True),
-               Column('max_charge_power', SmallInteger, nullable=True),
+               Column('max_charge_power', Float, nullable=True),
                Column('battery_type', VARCHAR(35), nullable=True),
                Column('replaceable', Boolean, nullable=True),
                Column('wireless_charging', VARCHAR(30), nullable=True),
@@ -169,7 +169,7 @@ physical_parameters = Table('physical_parameters', metadata,
                             Column('rear_material', VARCHAR(20), nullable=True),
                             Column('frame_material', VARCHAR(20), nullable=True),
                             Column('fingerprint_scanner', VARCHAR(20), nullable=True),
-                            Column('operating_system', VARCHAR(20), nullable=True),
+                            Column('operating_system', VARCHAR(50), nullable=True),
                             Column('rom', VARCHAR(20), nullable=True),
                             Column('os_size', Float, nullable=True),
                             Column('speakers', VARCHAR(20), nullable=True),
@@ -181,18 +181,7 @@ physical_parameters = Table('physical_parameters', metadata,
                             Column('sensors', ARRAY(Text), nullable=True),
                             Column('charger_out_of_the_box', VARCHAR(20), nullable=True)
                             )
-# with engine.connect() as conn:
-#     insert_query = smartphone_main.insert().values(
-#         [
-#             {'title': 'Samsung A55',
-#              'brand': 'Samsung',
-#              'advantage': ["nnn", "mmmm"],
-#              'disadvantage': ["dsfsdf", "mfdgsdfgmmm"],
-#              'final_score': 5}
-#         ]
-#     )
-#     conn.execute(insert_query)
-#     conn.commit()
+
 
 # with engine.connect() as conn:
 #     result = smartphone_main.c.title
