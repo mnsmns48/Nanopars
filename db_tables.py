@@ -179,3 +179,8 @@ physical_parameters = Table('physical_parameters', metadata,
                             Column('sensors', ARRAY(Text), nullable=True),
                             Column('charger_out_of_the_box', VARCHAR(20), nullable=True)
                             )
+
+temp_table = Table('temp_', metadata,
+                            Column('title', VARCHAR(40), primary_key=True),
+                            Column('brand', VARCHAR(10))
+                   )

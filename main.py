@@ -16,9 +16,9 @@ headers = {'User-Agent':
 def find_new_items() -> bool:
     prefix = 'https://nanoreview.net'
     new_link_list = list()
-    with open('card_list.txt', 'r') as f:
+    with open('C:/Users/cifrotech/PycharmProjects/Nanopars/card_list.txt', 'r') as f:
         old_card_list = f.read().split('\n')
-    with open('url_list.txt', 'r') as f:
+    with open('C:/Users/cifrotech/PycharmProjects/Nanopars/url_list.txt', 'r') as f:
         brands_list = f.read().split('\n')
     for brand in brands_list:
         response = requests.get(url=brand, headers=headers, timeout=3)
@@ -32,7 +32,7 @@ def find_new_items() -> bool:
     if len(new_link_list) > 0:
         for i in new_link_list:
             print('Добавление в базу', i.rsplit('/', 1)[-1])
-        file_ = open('new_phones_list.txt', 'w')
+        file_ = open('C:/Users/cifrotech/PycharmProjects/Nanopars/new_phones_list.txt', 'w')
         for url_line in new_link_list:
             file_.write(url_line + '\n')
         file_.close()
@@ -118,7 +118,7 @@ def write_in_db(soup: BeautifulSoup) -> None:
 
 
 def start():
-    with open('new_phones_list.txt', 'r') as card_file:
+    with open('C:/Users/cifrotech/PycharmProjects/Nanopars/new_phones_list.txt', 'r') as card_file:
         result_reading = card_file.read()
         card_url_list_ = result_reading.split('\n')
     for card_url in url_generator(card_url_list_):
@@ -126,7 +126,7 @@ def start():
         soup_ = BeautifulSoup(response.text, 'lxml')
         write_in_db(soup_)
         time.sleep(3)
-    with open('card_list.txt', 'a') as file_:
+    with open('C:/Users/cifrotech/PycharmProjects/Nanopars/card_list.txt', 'a') as file_:
         file_.write('\n')
         for line in result_reading:
             file_.write(line)
