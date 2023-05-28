@@ -846,4 +846,5 @@ https://nanoreview.net/ru/phone/xiaomi-poco-f5-pro
 https://nanoreview.net/ru/phone/sony-xperia-10-v
 https://nanoreview.net/ru/phone/sony-xperia-1-v
 https://nanoreview.net/ru/phone/google-pixel-fold
-https://nanoreview.net/ru/phone/google-pixel-7a
+https://nanoreview.net/ru/phone/google-pixel-7
+https://nanoreview.net/ru/phone/xiaomi-redmi-note-10-pro

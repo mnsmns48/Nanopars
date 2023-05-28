@@ -32,7 +32,7 @@ def find_new_items() -> bool:
     if len(new_link_list) > 0:
         for i in new_link_list:
             print('Добавление в базу', i.rsplit('/', 1)[-1])
-        file_ = open('C:/Users/cifrotech/PycharmProjects/Nanopars/new_phones_list.txt', 'w')
+        file_ = open('new_phones_list.txt', 'w')
         for url_line in new_link_list:
             file_.write(url_line + '\n')
         file_.close()
@@ -118,7 +118,7 @@ def write_in_db(soup: BeautifulSoup) -> None:
 
 
 def start():
-    with open('C:/Users/cifrotech/PycharmProjects/Nanopars/new_phones_list.txt', 'r') as card_file:
+    with open('new_phones_list.txt', 'r') as card_file:
         result_reading = card_file.read()
         card_url_list_ = result_reading.split('\n')
     for card_url in url_generator(card_url_list_):
@@ -126,11 +126,10 @@ def start():
         soup_ = BeautifulSoup(response.text, 'lxml')
         write_in_db(soup_)
         time.sleep(3)
-    with open('C:/Users/cifrotech/PycharmProjects/Nanopars/card_list.txt', 'a') as file_:
+    with open('card_list.txt', 'a') as file_:
         file_.write('\n')
         for line in result_reading:
             file_.write(line)
-    file_.close()
 
 
 if __name__ == "__main__":
